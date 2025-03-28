@@ -204,7 +204,7 @@
             </span>
           </div>
 
-          <form class="sb" action="https://formbold.com/s/unique_form_id" method="POST">
+          <form class="sb" id="signupForm" method="POST">
             <div class="wb">
               <label class="rc kk wm vb" for="fullname">Full name</label>
               <input
@@ -238,7 +238,7 @@
               />
             </div>
 
-            <button class="vd rj ek rc rg gh lk ml il _l gi hi">
+            <button class="vd rj ek rc rg gh lk ml il _l gi hi" type="submit">
               Sign Up
             </button>
 
@@ -440,5 +440,38 @@
 </button>
 
     <!-- ====== Back To Top End ===== -->
-  <script defer src="bundle.js"></script></body>
+  <script defer src="bundle.js"></script>
+
+  <script>
+    document.getElementById("signupForm").addEventListener("submit", async function (event) {
+      event.preventDefault();
+  
+      const fullname = document.getElementById("fullname").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+  
+      try {
+        const response = await fetch("http://localhost:5000/api/auth/signup", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ fullname, email, password }),
+        });
+  
+        const data = await response.json();
+        if (response.ok) {
+          alert("Signup successful! Redirecting to login...");
+          window.location.href = "signin.html";
+        } else {
+          alert(data.msg || "Signup failed");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred. Please try again.");
+      }
+    });
+  </script>
+
+</body>
 </html>

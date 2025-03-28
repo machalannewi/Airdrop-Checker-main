@@ -1,0 +1,54 @@
+<h1>Dashboard</h1>
+<p>Welcome to the dashboard. Here you can view the list of airdrops you are subscribed to.</p>
+<button onclick="logout()">Logout</button>
+
+
+<div id="airdrop-list"></div>
+
+
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const token = localStorage.getItem("token");
+    
+        if (!token) {
+            alert("You need to login first.");
+            window.location.href = "signin.html"; // Redirect to login
+            return;
+        }
+    
+        // Fetch airdrop list if user is subscribed
+        const isSubscribed = localStorage.getItem("subscribed") === "true";
+    
+        if (!isSubscribed) {
+            document.getElementById("airdrop-list").innerHTML = "<p>You need to subscribe to access airdrops.</p>";
+        } else {
+            fetchAirdrops(token);
+        }
+    });
+    
+    async function fetchAirdrops(token) {
+        const res = await fetch("http://localhost:5000/api/airdrops", {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` },
+        });
+    
+        const data = await res.json();
+    
+        if (res.ok) {
+            document.getElementById("airdrop-list").innerHTML = JSON.stringify(data, null, 2);
+        } else {
+            alert(data.msg || "Failed to fetch airdrops.");
+        }
+    }
+    </script>
+    
+
+    <script>
+        function logout() {
+            localStorage.removeItem("token");
+            localStorage.removeItem("subscribed");
+            alert("Logged out successfully!");
+            window.location.href = "signin.html"; // Redirect to login
+        }
+        </script>

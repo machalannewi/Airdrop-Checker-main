@@ -206,13 +206,13 @@
             </span>
           </div>
 
-          <form class="sb" action="https://formbold.com/s/unique_form_id" method="POST">
+          <form class="sb" id="signinForm" method="POST">
             <div class="wb">
-              <label class="rc kk wm vb" for="username">Username</label>
+              <label class="rc kk wm vb" for="email">Email</label>
               <input
-                type="text"
-                name="username"
-                id="username"
+                type="email"
+                name="email"
+                id="email"
                 placeholder="example@gmail.com"
                 class="vd hh rg zk _g ch hm dm fm pl/50 xi mi sm xm pm dn/40"
               />
@@ -229,7 +229,7 @@
               />
             </div>
 
-            <button class="vd rj ek rc rg gh lk ml il _l gi hi">
+            <button class="vd rj ek rc rg gh lk ml il _l gi hi" id="submit">
               Sign In
             </button>
 
@@ -431,5 +431,40 @@
 </button>
 
     <!-- ====== Back To Top End ===== -->
-  <script defer src="bundle.js"></script></body>
+  <script defer src="bundle.js"></script>
+
+
+  <script>
+    document.getElementById("signinForm").addEventListener("submit", async function (event) {
+      event.preventDefault();
+  
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+  
+      try {
+        const response = await fetch("http://localhost:5000/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
+  
+        const data = await response.json();
+        if (response.ok) {
+          localStorage.setItem("token", data.token); // Save token
+          localStorage.setItem("subscribed", data.isSubscribed); // Save subscription status
+          alert("Login successful! Redirecting to dashboard...");
+          window.location.href = "dashboard.html";
+        } else {
+          alert(data.msg || "Login failed");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred. Please try again.");
+      }
+    });
+  </script>
+
+</body>
 </html>

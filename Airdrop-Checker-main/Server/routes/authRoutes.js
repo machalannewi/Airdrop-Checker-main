@@ -8,32 +8,42 @@ import dotenv from "dotenv";
 dotenv.config();
 const router = express.Router();
 
-// User Signup
-router.post("/signup", [
-  body("username").notEmpty().withMessage("Username is required"),
-  body("email").isEmail().withMessage("Enter a valid email"),
-  body("password").isLength({ min: 6 }).withMessage("Password must be 6+ chars"),
-], async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-  try {
-    const { username, email, password } = req.body;
-    const userExists = await User.findOne({ email });
+// 🔥 User Signup
+router.post(
+  "/signup",
+  [
+    body("fullname").notEmpty().withMessage("Full name is required"),
+    body("email").isEmail().withMessage("Enter a valid email"),
+    body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters long"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-    if (userExists) return res.status(400).json({ msg: "User already exists" });
+    try {
+      const { fullname, email, password } = req.body;
+      const userExists = await User.findOne({ email });
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+      if (userExists) return res.status(400).json({ msg: "User already exists" });
 
-    const user = new User({ username, email, password: hashedPassword });
-    await user.save();
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
-    res.status(201).json({ msg: "User registered successfully" });
-  } catch (error) {
-    res.status(500).json({ msg: "Server error", error });
+      const user = new User({ fullname, email, password: hashedPassword });
+      await user.save();
+
+      // Generate JWT Token
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+      res.status(201).json({ msg: "User registered successfully", token });
+    } catch (error) {
+      res.status(500).json({ msg: "Server error", error });
+    }
   }
-});
+);
+
+
 
 // User Login
 router.post("/login", [
@@ -59,5 +69,9 @@ router.post("/login", [
     res.status(500).json({ msg: "Server error", error });
   }
 });
+
+
+
+
 
 export default router;
