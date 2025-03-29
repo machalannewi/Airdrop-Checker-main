@@ -87,6 +87,7 @@
 <h1>Dashboard</h1>
 <p>Welcome to the dashboard. Here you can view the list of airdrops you are subscribed to.</p>
 <button id="viewAirdropBtn">View Airdrop</button>
+<button id="payWithPaystack">Subscribe Now</button>
 <button onclick="logout()">Logout</button>
 
     <h1>Latest Airdrops</h1>
@@ -169,6 +170,44 @@
             alert("Logged out successfully!");
             window.location.href = "signin.html"; // Redirect to login
         }
+
+
+
+    document.getElementById("payWithPaystack").addEventListener("click", async () => {
+    const token = localStorage.getItem("token");
+
+    try {
+        const res = await fetch("http://localhost:5000/api/paystack/pay", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const data = await res.json();
+        if (data.authorization_url) {
+            window.location.href = data.authorization_url; // Redirect to Paystack payment page
+        } else {
+            alert("Payment initialization failed.");
+        }
+    } catch (error) {
+        console.error("Error starting payment:", error);
+        alert("An error occurred. Try again.");
+    }
+});
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("success") === "true") {
+        alert("Subscription successful!");
+        localStorage.setItem("subscribed", "true");
+    } else if (params.get("success") === "false") {
+        alert("Payment failed. Try again.");
+    }
+});
+
         </script>
         
 
