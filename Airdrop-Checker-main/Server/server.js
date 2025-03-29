@@ -7,6 +7,7 @@ import airdropRoutes from "./routes/airdropRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import subscribeRoutes from "./routes/subscribeRoutes.js";
 import paystackRoutes from "./routes/paystackRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 
 
 
@@ -35,9 +36,10 @@ const connectDB = async () => {
 connectDB();
 app.use("/api/auth", authRoutes);
 app.use("/api", airdropRoutes);  // Protected Airdrop Route
-app.use("/api/users", userRoutes);  // Protected User Route
+app.use("/api/users", userRoutes); // Protected User Route
 app.use("/api/users", subscribeRoutes);  // Protected Subscribe status Route
 app.use("/api/paystack", paystackRoutes);  // Paystack Payment Route
+app.use("/api/admin", adminRoutes); // Protected Admin Route
 
 
 
