@@ -27,15 +27,15 @@ export const adminAuthMiddleware = async (req, res, next) => {
         const token = authHeader.startsWith("Bearer ") ? authHeader.split(" ")[1] : authHeader;
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        console.log("🔑 Decoded Token:", decoded);
-        console.log("🔍 Looking for Admin with ID:", decoded.adminId); // ✅ Now using adminId
+        // console.log("🔑 Decoded Token:", decoded);
+        // console.log("🔍 Looking for Admin with ID:", decoded.adminId); // ✅ Now using adminId
 
         const admin = await Admin.findById(decoded.adminId); // ✅ Now querying with adminId
 
         console.log("🔍 Admin Data:", admin); // ✅ Debug log
 
         if (!admin) {
-            console.log("❌ Access denied: Admin not found");
+            // console.log("❌ Access denied: Admin not found");
             return res.status(403).json({ msg: "Forbidden: Admin only" });
         }
 
