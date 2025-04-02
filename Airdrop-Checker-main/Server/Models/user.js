@@ -8,6 +8,8 @@ const UserSchema = new mongoose.Schema({
   isSubscribed: { type: Boolean, default: false },
   claimedAirdrops: [{ type: String }], // 🔥 Track claimed airdrops
   subscriptionExpiry: { type: Date, default: null }, // 🆕 Expiry date
+  lastExpiryNotification: Date, // Track when expiry emails were sent
+  expiryReason: String // Optional: "auto-expired" vs "manual-cancellation"
 }, { timestamps: true });
 
 export default mongoose.model("User", UserSchema);
