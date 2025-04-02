@@ -56,20 +56,33 @@ router.get("/transactions", adminAuthMiddleware, async (req, res) => {
     }
 });
 
-// **2️⃣ Verify a transaction**
-router.put("/transactions/verify/:id", adminAuthMiddleware, async (req, res) => {
+// Verify transaction API
+router.patch("/verify-transaction/:id", adminAuthMiddleware, async (req, res) => {
     try {
-        const transaction = await Transaction.findById(req.params.id);
-        if (!transaction) return res.status(404).json({ msg: "Transaction not found" });
+        const { id } = req.params;
 
+        // Find the transaction
+        const transaction = await Transaction.findById(id);
+        if (!transaction) {
+            return res.status(404).json({ msg: "Transaction not found" });
+        }
+
+        // Ensure it's still pending
+        if (transaction.status !== "pending") {
+            return res.status(400).json({ msg: "Transaction already verified" });
+        }
+
+        // Update transaction status
         transaction.status = "verified";
         await transaction.save();
 
-        res.json({ msg: "Transaction verified successfully" });
+        res.json({ msg: "Transaction verified successfully", transaction });
     } catch (error) {
-        res.status(500).json({ msg: "Error verifying transaction" });
+        console.error("Error verifying transaction:", error);
+        res.status(500).json({ msg: "Server error" });
     }
 });
+
 
 
 export default router;

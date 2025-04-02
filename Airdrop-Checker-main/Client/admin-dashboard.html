@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <script>
-        document.addEventListener("DOMContentLoaded", fetchTransactions);
 
         async function fetchTransactions() {
             const token = localStorage.getItem("adminToken");
@@ -46,22 +45,60 @@
             }
         }
 
-        async function verifyTransaction(id) {
-            const token = localStorage.getItem("adminToken");
+        // async function verifyTransaction(id) {
+        //     const token = localStorage.getItem("adminToken");
 
-            try {
-                const response = await fetch(`http://localhost:5000/api/admin/transactions/verify/${id}`, {
-                    method: "PUT",
-                    headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" }
-                });
+        //     try {
+        //         const response = await fetch(`http://localhost:5000/api/admin/transactions/verify/${id}`, {
+        //             method: "PUT",
+        //             headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" }
+        //         });
 
-                const data = await response.json();
-                alert(data.msg);
-                location.reload(); // Refresh transactions
-            } catch (error) {
-                alert("Error verifying transaction");
+        //         const data = await response.json();
+        //         alert(data.msg);
+        //         location.reload(); // Refresh transactions
+        //     } catch (error) {
+        //         alert("Error verifying transaction");
+        //     }
+        // }
+
+
+        async function verifyTransaction(transactionId) {
+                const token = localStorage.getItem("adminToken");
+                if (!token) {
+                    alert("Admin authentication required.");
+                    return;
+                }
+
+                if (!confirm("Are you sure you want to verify this transaction?")) return;
+
+                try {
+                    const response = await fetch(`http://localhost:5000/api/admin/verify-transaction/${transactionId}`, {
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert("Transaction verified successfully!");
+                        fetchTransactions(); // Refresh the list
+                    } else {
+                        alert("Error verifying transaction: " + result.msg);
+                    }
+                } catch (error) {
+                    console.error("Verification error:", error);
+                }
             }
-        }
+
+            fetchTransactions(); // Load transactions on page load
+
+
+
+
+
 
         function logout() {
             localStorage.removeItem("adminToken");
