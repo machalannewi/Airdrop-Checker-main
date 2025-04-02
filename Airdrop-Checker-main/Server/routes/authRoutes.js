@@ -14,6 +14,7 @@ router.post(
   "/signup",
   [
     body("fullname").notEmpty().withMessage("Full name is required"),
+    body("username").notEmpty().isLength({ min: 3 }).withMessage("Username must be at least 3 characters long"),
     body("email").isEmail().withMessage("Enter a valid email"),
     body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters long"),
   ],
@@ -22,7 +23,7 @@ router.post(
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
     try {
-      const { fullname, email, password } = req.body;
+      const { fullname, username, email, password } = req.body;
       const userExists = await User.findOne({ email });
 
       if (userExists) return res.status(400).json({ msg: "User already exists" });
@@ -30,7 +31,7 @@ router.post(
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      const user = new User({ fullname, email, password: hashedPassword });
+      const user = new User({ fullname, username, email, password: hashedPassword });
       await user.save();
 
       // Generate JWT Token

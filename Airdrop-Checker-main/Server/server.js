@@ -2,6 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+import cron from "node-cron";   // For scheduling tasks
+import User from "./Models/user.js"; // Import User model;
 import authRoutes from "./routes/authRoutes.js";
 import airdropRoutes from "./routes/airdropRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -34,6 +36,37 @@ const connectDB = async () => {
   }
 };
 connectDB();
+
+
+
+// Run every midnight to check for expired subscriptions
+cron.schedule("0 0 * * *", async () => {
+  console.log("🔍 Running subscription expiry check...");
+  const now = new Date();
+  // console.log("Current Date:", now);
+
+  try {
+      // Find users with expired subscriptions
+      const expiredUsers = await User.find({
+          isSubscribed: true,
+          subscriptionExpiry: { $lte: now }
+      });
+
+      if (expiredUsers.length > 0) {
+          // Update them to mark as unsubscribed
+          await User.updateMany(
+              { subscriptionExpiry: { $lte: now } },
+              { $set: { isSubscribed: false } }
+          );
+
+          console.log(`✅ Subscription expired for ${expiredUsers.length} users.`);
+      } else {
+          console.log("✅ No expired subscriptions found.");
+      }
+  } catch (error) {
+      console.error("❌ Error updating subscriptions:", error);
+  }
+});
 app.use("/api/auth", authRoutes);
 app.use("/api", airdropRoutes);  // Protected Airdrop Route
 app.use("/api/users", userRoutes); // Protected User Route
