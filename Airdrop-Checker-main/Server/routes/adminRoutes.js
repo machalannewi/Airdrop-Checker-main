@@ -6,6 +6,8 @@ import dotenv from "dotenv";
 import adminAuth from "../middleware/adminAuth.js"; // Middleware to protect admin routes
 import Transaction from "../Models/Transaction.js";
 import { adminAuthMiddleware } from "../middleware/adminAuth.js"; // Middleware to protect admin routes
+import Deposit from "../Models/deposit.js";
+import User from "../Models/user.js";
 
 dotenv.config();
 
@@ -83,6 +85,45 @@ router.patch("/verify-transaction/:id", adminAuthMiddleware, async (req, res) =>
     }
 });
 
+
+// Admin verifies deposit
+router.put("/verify-deposit/:id", adminAuthMiddleware, async (req, res) => {
+    try {
+        const { status } = req.body;
+        const { id } = req.params;
+
+        if (!["approved", "rejected"].includes(status)) {
+            return res.status(400).json({ msg: "Invalid status" });
+        }
+
+        const deposit = await Deposit.findById(id);
+        if (!deposit) {
+            return res.status(404).json({ msg: "Deposit not found" });
+        }
+
+        if (deposit.status !== "pending") {
+            return res.status(400).json({ msg: "Deposit already processed" });
+        }
+
+        deposit.status = status;
+        await deposit.save();
+
+        // If approved, update user balance
+        if (status === "approved") {
+            const user = await User.findById(deposit.userId);
+            if (!user) return res.status(404).json({ msg: "User not found" });
+
+            // Update user's method-specific balance
+            const balanceField = `${deposit.currency.toLowerCase()}_balance`; // Example: btc_balance
+            user[balanceField] = (user[balanceField] || 0) + deposit.amount;
+            await user.save();
+        }
+
+        res.json({ msg: `Deposit ${status} successfully` });
+    } catch (error) {
+        res.status(500).json({ msg: "Server error", error: error.message });
+    }
+});
 
 
 export default router;

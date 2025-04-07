@@ -11,6 +11,7 @@ import subscribeRoutes from "./routes/subscribeRoutes.js";
 import paystackRoutes from "./routes/paystackRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import { sendRenewalReminder, sendSubscriptionExpiredEmail } from "./routes/mailer.js"; // Import mailer functions
+import depositRoutes from "./routes/depositRoutes.js"; // Import deposit routes
 
 
 
@@ -197,6 +198,7 @@ app.use("/api/users", userRoutes); // Protected User Route
 app.use("/api/users", subscribeRoutes);  // Protected Subscribe status Route
 app.use("/api/paystack", paystackRoutes);  // Paystack Payment Route
 app.use("/api/admin", adminRoutes); // Protected Admin Route
+app.use("/api/deposits", depositRoutes); // Deposit Route
 
 
 
