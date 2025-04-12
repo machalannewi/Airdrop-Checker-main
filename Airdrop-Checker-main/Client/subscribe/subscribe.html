@@ -35,45 +35,8 @@
         <div class="modal-content">
             <span class="close-crypto">&times;</span>
             <button class="back-button">&larr; Back</button>
-            <h2>Select Cryptocurrency</h2>
-            <div class="crypto-options">
-                <div class="crypto-option" data-currency="BTC">
-                    <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.png" alt="Bitcoin" class="crypto-logo">
-                    <h3>Bitcoin (BTC)</h3>
-                    <div class="wallet-address" style="display: none;">
-                        <p>Send payment to:</p>
-                        <div class="address-box">
-                            <code id="btc-address">bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh</code>
-                            <button class="copy-button" data-address="bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh">Copy</button>
-                        </div>
-                        <p class="small-text">Send exactly 0.05 BTC</p>
-                    </div>
-                </div>
-                <div class="crypto-option" data-currency="ETH">
-                    <img src="https://cryptologos.cc/logos/ethereum-eth-logo.png" alt="Ethereum" class="crypto-logo">
-                    <h3>Ethereum (ETH)</h3>
-                    <div class="wallet-address" style="display: none;">
-                        <p>Send payment to:</p>
-                        <div class="address-box">
-                            <code id="eth-address">0x71C7656EC7ab88b098defB751B7401B5f6d8976F</code>
-                            <button class="copy-button" data-address="0x71C7656EC7ab88b098defB751B7401B5f6d8976F">Copy</button>
-                        </div>
-                        <p class="small-text">Send exactly 0.1 ETH</p>
-                    </div>
-                </div>
-                <div class="crypto-option" data-currency="SOL">
-                    <img src="https://cryptologos.cc/logos/solana-sol-logo.png" alt="Solana" class="crypto-logo">
-                    <h3>Solana (SOL)</h3>
-                    <div class="wallet-address" style="display: none;">
-                        <p>Send payment to:</p>
-                        <div class="address-box">
-                            <code id="sol-address">HN5XG1mKEmA1Zx7vdHqZFFz8NtX2KqQqEoFYxGjGbg2q</code>
-                            <button class="copy-button" data-address="HN5XG1mKEmA1Zx7vdHqZFFz8NtX2KqQqEoFYxGjGbg2q">Copy</button>
-                        </div>
-                        <p class="small-text">Send exactly 1 SOL</p>
-                    </div>
-                </div>
-            </div>
+            <p>Select a wallet to deposit to:</p>
+            <ul id="walletList"></ul>
             <div class="payment-instructions" style="display: none;">
                 <h3>Payment Instructions</h3>
                 <p>1. Send the exact amount to the address shown</p>
@@ -88,5 +51,6 @@
     </div>
 
     <script src="subscribe.js"></script>
+        
 </body>
 </html>
