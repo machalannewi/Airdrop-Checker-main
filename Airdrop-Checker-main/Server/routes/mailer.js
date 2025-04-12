@@ -74,3 +74,41 @@ export async function sendSubscriptionExpiredEmail(email) {
 
   await transporter.sendMail(mailOptions);
 }
+
+// 3. Subscription renewal confirmation
+export async function sendSubscriptionRenewalEmail(email, newExpiryDate) {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "✅ Your Airdrop Checker Subscription Has Been Renewed!",
+    html: `
+      <p>Your subscription has been successfully renewed until <strong>${newExpiryDate.toDateString()}</strong>.</p>
+      <p>Thank you for staying with us!</p>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+}
+
+// 4. Deposit approval email
+export async function sendDepositApprovalEmail(email, amount, method, reference) {
+  const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Deposit Approved",
+      html: `
+          <h3>Deposit Approved</h3>
+          <p>Your deposit of <strong>$${amount}</strong> via <strong>${method}</strong> has been approved.</p>
+          ${reference ? `<p>Reference: ${reference}</p>` : ""}
+          <p>You can now access your updated balance in your dashboard.</p>
+      `,
+  };
+
+  try {
+      await transporter.sendMail(mailOptions);
+      console.log(`📧 Email sent to ${to}`);
+  } catch (error) {
+      console.error("❌ Email send error:", error.message);
+  }
+};
+

@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import authMiddleware from "../middleware/authMiddleware.js";
 import User from "../Models/user.js";
 import Transaction from "../Models/Transaction.js";
+import { sendDepositApprovalEmail } from "./mailer.js"; // Import the email function
 import axios from "axios";
 
 dotenv.config();
@@ -76,6 +77,12 @@ router.get("/verify", async (req, res) => {
                 }
 
                 user.isSubscribed = true;
+                await sendDepositApprovalEmail(
+                    user.email,
+                    paystackResponse.data.data.amount / 100,
+                    "paystack",
+                    reference
+                );
                 user.subscriptionExpiry = newExpiryDate;
                 await user.save();
 

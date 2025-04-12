@@ -1,5 +1,5 @@
 import express from "express";
-import Deposit from "../Models/deposit.js"; // Import the Deposit model
+import Deposit from "../Models/Transaction.js"; // Import the Deposit model
 import authMiddleware from "../middleware/authMiddleware.js"; // Ensure user is authenticated
 
 const router = express.Router();
@@ -7,15 +7,18 @@ const router = express.Router();
 // User submits deposit request
 router.post("/submit", authMiddleware, async (req, res) => {
     try {
-        const userId = req.user && req.user.userId; // ✅ Ensure correct extraction
+        // const userId = req.user && req.user.userId; // ✅ Ensure correct extraction
 
-        const { amount, currency, transactionHash } = req.body;
+        // const { amount, currency, transactionHash } = req.body;
+
+        const { amount, paymentMethod, reference, walletAddress, network, transactionHash } = req.body;
+        const userId = req.user && req.user.userId;
 
         if (!userId) {
             return res.status(401).json({ msg: "Unauthorized: No user ID found" });
         }
 
-        if (!amount || !currency || !transactionHash) {
+        if (!amount || !paymentMethod || !transactionHash) {
             return res.status(400).json({ msg: "All fields are required" });
         }
 
@@ -25,16 +28,26 @@ router.post("/submit", authMiddleware, async (req, res) => {
             return res.status(400).json({ msg: "Transaction hash already exists" });
         }
 
-        const deposit = new Deposit({
+        // const deposit = new Deposit({
+        //     userId,
+        //     amount,
+        //     currency,
+        //     transactionHash,
+        //     status: "pending"
+        // });
+
+        const newTransaction = new Deposit({
             userId,
             amount,
-            currency,
             transactionHash,
-            status: "pending"
-        });
+            reference,
+            paymentMethod: "Crypto",
+            walletAddress,
+            network,
+            status: "pending",
+          });
 
-
-        await deposit.save();
+        await newTransaction.save();
         res.status(201).json({ msg: "Deposit submitted. Awaiting admin approval." });
     } catch (error) {
         res.status(500).json({ msg: "Server error", error: error.message });

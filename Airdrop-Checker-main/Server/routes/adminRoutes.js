@@ -6,10 +6,12 @@ import dotenv from "dotenv";
 import adminAuth from "../middleware/adminAuth.js"; // Middleware to protect admin routes
 import Transaction from "../Models/Transaction.js";
 import { adminAuthMiddleware } from "../middleware/adminAuth.js"; // Middleware to protect admin routes
-import Deposit from "../Models/deposit.js";
+// import Deposit from "../Models/deposit.js";
 import User from "../Models/user.js";
+import { sendDepositApprovalEmail } from "./mailer.js"; // Import the email function
+import { sendSubscriptionRenewalEmail } from "./mailer.js"; // Import the email function
 
-dotenv.config();
+dotenv.config(); 
 
 const router = express.Router();
 
@@ -74,11 +76,49 @@ router.patch("/verify-transaction/:id", adminAuthMiddleware, async (req, res) =>
             return res.status(400).json({ msg: "Transaction already verified" });
         }
 
+        // Fetch the user associated with the transaction
+        const user = await User.findById(transaction.userId);
+        if (!user) {
+            return res.status(404).json({ msg: "User not found" });
+        }
+
+
         // Update transaction status
         transaction.status = "verified";
-        await transaction.save();
+        if(transaction.status === "verified") {
+                     if (user) {
+                            const currentDate = new Date();
+                            let newExpiryDate;
+            
+                            if (user.isSubscribed && user.subscriptionExpiry > currentDate) {
+                                // Extend subscription from current expiry date
+                                newExpiryDate = new Date(user.subscriptionExpiry);
+                                newExpiryDate.setDate(newExpiryDate.getDate() + 30);
+                            } else {
+                                // New subscription or expired subscription
+                                newExpiryDate = new Date();
+                                newExpiryDate.setDate(newExpiryDate.getDate() + 30);
+                            }
+            
+                            user.isSubscribed = true;
+                            user.subscriptionExpiry = newExpiryDate;
+                            await user.save();
+            
 
-        res.json({ msg: "Transaction verified successfully", transaction });
+              await sendDepositApprovalEmail(user.email, transaction.amount, "crypto", transaction.reference);
+             await sendSubscriptionRenewalEmail(user.email, newExpiryDate); // Send renewal email
+             await transaction.save();
+                                    
+            res.json({ msg: "Transaction verified successfully", transaction });
+             } else {
+                // User not found despite successful payment
+                console.error(`User with email ${email} not found after successful payment`);
+            }
+        }
+        // await sendDepositApprovalEmail(user.email, transaction.amount, "crypto", transaction.reference);
+        // await transaction.save();
+
+        // res.json({ msg: "Transaction verified successfully", transaction });
     } catch (error) {
         console.error("Error verifying transaction:", error);
         res.status(500).json({ msg: "Server error" });
@@ -96,7 +136,7 @@ router.put("/verify-deposit/:id", adminAuthMiddleware, async (req, res) => {
             return res.status(400).json({ msg: "Invalid status" });
         }
 
-        const deposit = await Deposit.findById(id);
+        const deposit = await Transaction.findById(id);
         if (!deposit) {
             return res.status(404).json({ msg: "Deposit not found" });
         }

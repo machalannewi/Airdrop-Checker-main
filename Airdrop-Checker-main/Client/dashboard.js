@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             card.className = "deposit-card";
             card.innerHTML = `
               <p><strong>Amount:</strong> $${deposit.amount}</p>
-              <p><strong>Currency:</strong> ${deposit.currency}</p>
+              <p><strong>Currency:</strong> ${deposit.paymentMethod}</p>
               <p><strong>Status:</strong> 
                 <span class="${deposit.status === 'verified' ? 'status-verified' : 'status-pending'}">
                   ${deposit.status}

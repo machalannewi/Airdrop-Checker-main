@@ -10,3 +10,4 @@ const depositSchema = new mongoose.Schema({
 });
 
 export default mongoose.model("Deposit", depositSchema);
+
