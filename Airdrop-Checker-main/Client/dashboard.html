@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Airdrop List</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
     <style>
         /* General Styles */
         body {
@@ -92,6 +93,10 @@
 
     <h1>Latest Airdrops</h1>
     <div id="airdrop-list" class="airdrop-container">Loading...</div>
+
+    <h2>Your Deposits</h2>
+    <div class="deposit-list" id="deposit-list"></div>
+
 
     <script>
         document.getElementById("viewAirdropBtn").addEventListener("click", async () => {
@@ -211,5 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
         </script>
         
 
+
+<script src="dashboard.js"></script>
 </body>
 </html>

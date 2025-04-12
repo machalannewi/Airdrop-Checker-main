@@ -45,3 +45,67 @@ document.getElementById("viewAirdropBtn").addEventListener("click", async () => 
 //         container.appendChild(div);
 //     });
 // }
+
+
+document.addEventListener("DOMContentLoaded", async () => {
+    const token = localStorage.getItem("token");
+
+    try {
+        const res = await fetch("http://localhost:5000/api/deposits/user", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            }
+        });
+
+        const data = await res.json();
+
+        if (data.deposits.length === 0) {
+            document.getElementById("deposit-list").innerHTML = "<p>No deposits yet.</p>";
+        } else { 
+            data.deposits.forEach(deposit => {
+            const card = document.createElement("div");
+            card.className = "deposit-card";
+            card.innerHTML = `
+              <p><strong>Amount:</strong> $${deposit.amount}</p>
+              <p><strong>Currency:</strong> ${deposit.currency}</p>
+              <p><strong>Status:</strong> 
+                <span class="${deposit.status === 'verified' ? 'status-verified' : 'status-pending'}">
+                  ${deposit.status}
+                </span>
+              </p>
+              <p><strong>Date:</strong> ${new Date(deposit.createdAt).toLocaleString()}</p>
+              
+            `;
+            depositList.appendChild(card);
+          });
+        }
+    } catch (error) {
+        console.error("📛 Error fetching deposits:", error);
+        document.getElementById("deposit-list").innerHTML = "<p>Failed to load deposits.</p>";
+    }
+});
+
+
+
+const depositList = document.getElementById("deposit-list");
+
+deposits.forEach(deposit => {
+  const card = document.createElement("div");
+  card.className = "deposit-card";
+  card.innerHTML = `
+    <h2>${deposit.username || deposit.email}</h2>
+    <p><strong>Amount:</strong> $${deposit.amount}</p>
+    <p><strong>Currency:</strong> ${deposit.currency}</p>
+    <p><strong>Status:</strong> 
+      <span class="${deposit.status === 'verified' ? 'status-verified' : 'status-pending'}">
+        ${deposit.status}
+      </span>
+    </p>
+    <p><strong>Date:</strong> ${new Date(deposit.createdAt).toLocaleString()}</p>
+    ${deposit.status === "pending" ? `<button class="verify-btn" onclick="verifyDeposit('${deposit._id}')">Verify</button>` : ""}
+  `;
+  depositList.appendChild(card);
+});
+

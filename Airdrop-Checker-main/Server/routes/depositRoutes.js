@@ -41,4 +41,25 @@ router.post("/submit", authMiddleware, async (req, res) => {
     }
 });
 
+
+// GET /api/deposits/user - fetch user's deposits
+router.get("/user", authMiddleware, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        if (!userId) {
+            return res.status(401).json({ msg: "Unauthorized: No user ID found" });
+        }
+        console.log("📥 Fetching deposits for:", userId);
+
+
+        const deposits = await Deposit.find({ userId }).sort({ createdAt: -1 });
+        res.status(200).json({ deposits });
+        // console.log(deposits)
+        
+    } catch (error) {
+        console.error("❌ Error fetching user deposits:", error.message);
+        res.status(500).json({ msg: "Failed to fetch deposits" });
+    }
+});
+
 export default router;
