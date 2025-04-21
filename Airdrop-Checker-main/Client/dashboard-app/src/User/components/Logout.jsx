@@ -1,15 +1,22 @@
+// import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
+export default function Logout() {
+  const navigate = useNavigate();
 
-function Logout() {
-  const handleLogout = () => {
+//   useEffect(() => {
+    // Clear all relevant data
     localStorage.removeItem("token");
-    window.location.reload();
-  };
+    localStorage.removeItem("subscribed"); // if you use this
 
-  return (
-    <button onClick={handleLogout} className="btn btn-danger">
-      Logout
-    </button>
-  );
+    toast.success("Logged out successfully!");
+
+    // Redirect to login
+    setTimeout(() => {
+      navigate("/login");
+    }, 2000);
+//   }, [navigate]);
+
+//   return null; // or a spinner/loading screen if you want
 }
-export default Logout;

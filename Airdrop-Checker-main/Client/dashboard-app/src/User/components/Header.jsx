@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Menu, LogOut, User } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import Dashboard from "./Dashboard.jsx";
 import Subscribe from "./Subscribe.jsx";
 import Payments from "./Payments.jsx";
@@ -8,14 +10,21 @@ import Transactions from "./Transactions.jsx";
 import ClaimAirdrop from "./ClaimAirdrop.jsx";
 import Logout from "./Logout.jsx";
 
+
+
+
+
+
 const SidebarLinks = [
   { name: "Dashboard", href: "#" },
   { name: "Subscribe", href: "#" },
-  { name: "Claim Airdrop", href: "#" },
+  { name: "View Airdrop", href: "#" },
   { name: "Payments", href: "#" },
   { name: "Transactions", href: "#" },
-  { name: "Logout", href: "#" },
+  { name: "Logout", href: "/Login" },
 ];
+
+
 
 export default function UserDashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -25,6 +34,23 @@ export default function UserDashboardLayout() {
     setActiveLink(name);
     setSidebarOpen(false); // close on mobile
   };
+
+  const navigate = useNavigate();
+
+const handleLogout = () => {
+  // Clear authentication data (adjust if needed)
+  localStorage.removeItem("token");
+  localStorage.removeItem("subscribed");
+
+  toast.success("Logged out successfully!");
+
+  // Redirect to login page
+  setTimeout(() => {
+  navigate("/login");
+  }, 2000);
+};
+
+  
 
   return (
     <div className="flex h-screen bg-radial-dark text-white">
@@ -109,20 +135,22 @@ export default function UserDashboardLayout() {
             </div>
           </div>
 
-          <button className="text-sm bg-[#E07A5F] hover:bg-[#E07A5F] px-4 py-2 rounded-md flex items-center gap-2">
+          <button onClick={handleLogout}
+          className="text-sm bg-[#E07A5F] hover:bg-[#E07A5F] px-4 py-2 rounded-md flex items-center gap-2 logout">
             <LogOut className="w-4 h-4" /> Logout
           </button>
         </header>
+        
 
           {/* Conditionally Render Pages */}
         <main className="flex-1 p-6 overflow-y-auto">
           {activeLink === "Dashboard" && <Dashboard />}
           {activeLink === "Subscribe" && <Subscribe />}
-          {activeLink === "Claim Airdrop" && <ClaimAirdrop />}
+          {activeLink === "View Airdrop" && <ClaimAirdrop />}
           {activeLink === "Payments" && <Payments />}
           {activeLink === "Transactions" && <Transactions />}
-          {activeLink === "Logout" && <Logout />}
-          
+          {activeLink === "Logout" && <Logout onClick={handleLogout}/>}
+
         </main>
 
       </div>

@@ -18,8 +18,8 @@ function Transactions() {
             <td>Completed</td>
           </tr>
           <tr>
-            <td>2023-10-02</td>
-            <td>$200</td>
+            <td>2023-10-04</td>
+            <td>$100</td>
             <td>Pending</td>
           </tr>
         </tbody>
