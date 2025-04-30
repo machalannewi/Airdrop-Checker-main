@@ -15,7 +15,7 @@ router.post(
   [
     body("fullname").notEmpty().withMessage("Full name is required"),
     body("username").notEmpty().isLength({ min: 3 }).withMessage("Username must be at least 3 characters long"),
-    body("email").isEmail().withMessage("Enter a valid email"),
+    body("email").isEmail().withMessage("Enter a valid email").trim().toLowerCase(),
     body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters long"),
   ],
   async (req, res) => {
@@ -48,7 +48,7 @@ router.post(
 
 // User Login
 router.post("/login", [
-  body("email").isEmail().withMessage("Enter a valid email"),
+  body("email").isEmail().withMessage("Enter a valid email").trim().toLowerCase(),
   body("password").notEmpty().withMessage("Password is required"),
 ], async (req, res) => {
   const errors = validationResult(req);

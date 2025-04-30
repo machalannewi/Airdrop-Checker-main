@@ -453,6 +453,7 @@
         const data = await response.json();
         if (response.ok) {
           localStorage.setItem("token", data.token); // Save token
+          console.log("Received login token:", data.token);
           localStorage.setItem("subscribed", data.isSubscribed); // Save subscription status
           alert("Login successful! Redirecting to dashboard...");
           window.location.href = "http://localhost:5173/"; // Redirect to dashboard

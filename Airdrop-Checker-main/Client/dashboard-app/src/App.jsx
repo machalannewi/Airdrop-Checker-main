@@ -8,9 +8,11 @@ function App() {
 
   return (
     <>
+
             {/* Global elements that appear on every page */}
             <Outlet /> {/* This renders the matched child route */}
             <ToastContainer position="top-right" autoClose={2000} />
+            
     </>
   )
 }
