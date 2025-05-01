@@ -1,11 +1,11 @@
-// import { useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export default function Logout() {
   const navigate = useNavigate();
 
-//   useEffect(() => {
+  useEffect(() => {
     // Clear all relevant data
     localStorage.removeItem("token");
     localStorage.removeItem("subscribed"); // if you use this
@@ -14,9 +14,9 @@ export default function Logout() {
 
     // Redirect to login
     setTimeout(() => {
-      navigate("/login");
+      navigate("/");
     }, 2000);
-//   }, [navigate]);
+  }, [navigate]);
 
-//   return null; // or a spinner/loading screen if you want
+  return null; // or a spinner/loading screen if you want
 }

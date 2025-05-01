@@ -21,7 +21,7 @@ const SidebarLinks = [
   { name: "View Airdrop", href: "#" },
   { name: "Payments", href: "#" },
   { name: "Transactions", href: "#" },
-  { name: "Logout", href: "/Login" },
+  { name: "Logout" },
 ];
 
 
@@ -29,6 +29,7 @@ const SidebarLinks = [
 export default function UserDashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeLink, setActiveLink] = useState("Dashboard");
+
 
   const handleLinkClick = (name) => {
     setActiveLink(name);
@@ -46,7 +47,7 @@ const handleLogout = () => {
 
   // Redirect to login page
   setTimeout(() => {
-  navigate("/login");
+  navigate("/");
   }, 2000);
 };
 
@@ -149,7 +150,7 @@ const handleLogout = () => {
           {activeLink === "View Airdrop" && <ClaimAirdrop />}
           {activeLink === "Payments" && <Payments />}
           {activeLink === "Transactions" && <Transactions />}
-          {activeLink === "Logout" && <Logout onClick={handleLogout}/>}
+          {activeLink === "Logout" && <Logout/>}
 
         </main>
 
